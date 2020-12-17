@@ -2,6 +2,7 @@
  FROM python:3.6
 
  #Set our working directory as app
+ COPY . /app
  WORKDIR /app
  #Installing python packages pandas, scikit-learn and gunicorn
 # RUN pip install pandas scikit-learn flask gunicorn
