@@ -30,7 +30,7 @@ def BOW(text, words_to_index, dict_size):
 
 def load_model(X):
     dict_size = 10000
-    with open('models/words_to_idx.pickle', 'rb') as handle:
+    with open('pkl_file/words_to_idx.pickle', 'rb') as handle:
         words_to_idx = pickle.load(handle)
     X = sp_sparse.vstack([sp_sparse.csr_matrix(BOW(text, words_to_idx, dict_size)) for text in X])
 
