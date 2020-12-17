@@ -40,7 +40,11 @@ def load_model(X):
     return result
 
 
-# @app.get("/")
+@app.route("/", methods=['GET'])
+def hekllo():
+    return "Hello World"
+
+
 @app.route("/predict", methods=['POST'])
 async def get_prediction():
     abstract = request.get_json()
@@ -53,4 +57,4 @@ async def get_prediction():
     return jsonify(final_output)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=80)
