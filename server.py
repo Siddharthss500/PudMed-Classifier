@@ -46,7 +46,9 @@ async def get_prediction():
     abstract = request.get_json()
     data = abstract['data']
     data = pre_process(data)
+    print("Data preprocessed")
     output = load_model(data)
+    print("Model loaded")
     final_output = {"output": output}
     return jsonify(final_output)
 
