@@ -9,13 +9,27 @@ from flask import Flask, jsonify, request
 import logging
 from sklearn import linear_model
 
+# Create Flask Application
 app = Flask(__name__)
 
+# Setup to show logging while code is running on the docker image
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
 
 
+# BOW model
+def load_model():
+    filename = 'models/BOW_model.sav'
+    loaded_model = pickle.load(open(filename, 'rb'))
+    return loaded_model
+
+
+# Load the BOW model
+loaded_model = load_model()
+
+
+# BOW vectorizer
 def BOW(text, words_to_index, dict_size):
     # Simple BOW model
     result_vector = np.zeros(dict_size)
@@ -25,6 +39,7 @@ def BOW(text, words_to_index, dict_size):
     return result_vector
 
 
+# Simple pro-processing for text
 def pre_process(text):
     symbols = re.compile('[^A-Za-z0-9(),!?\'\`]')
     STOPWORDS = set(stopwords.words('english'))
@@ -35,19 +50,12 @@ def pre_process(text):
     dict_size = 10000
     with open('pkl_file/words_to_idx.pickle', 'rb') as handle:
         words_to_idx = pickle.load(handle)
+    # Build feature matrix
     X = sp_sparse.vstack([sp_sparse.csr_matrix(BOW(text, words_to_idx, dict_size)) for text in X])
     return X
 
 
-def load_model():
-    filename = 'models/BOW_model.sav'
-    loaded_model = pickle.load(open(filename, 'rb'))
-    return loaded_model
-
-
-loaded_model = load_model()
-
-
+# Assign classes based on the output vector
 def assign_class(output):
     output = tuple(output[0])
     out = {
@@ -60,19 +68,26 @@ def assign_class(output):
     return out[output]
 
 
+# Main POST that is listening for any input
 @app.route("/predict", methods=['POST'])
 def get_prediction():
+    # Get data in JSON format
     abstract = request.get_json()
     app.logger.debug(f'Get Data:{abstract}')
+    # Extract the abstract text
     data = abstract['param']
     app.logger.debug(f'View data{data}')
+    # Pre-process the data
     data = pre_process(data)
     app.logger.debug(f'Processed Data:{data}')
+    # Run it through the trained BOW model
     output = loaded_model.predict(data)
     app.logger.debug(f'Output:{output}')
+    # Get the corresponding class of the output vector
     final_output = {"output": assign_class(output)}
     return jsonify(final_output)
 
 
+# Flask app runs on port 80
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
