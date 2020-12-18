@@ -16,4 +16,4 @@
  #Exposing the port 5000 from the container
  EXPOSE 80
  #Starting the python application
- CMD ["gunicorn", "--bind", "0.0.0.0:80", "server:app"]
+ CMD ["gunicorn", "--bind", "0.0.0.0:80", "server:app", "--log-level", "DEBUG"]
