@@ -7,6 +7,9 @@ from scipy import sparse as sp_sparse
 from nltk.corpus import stopwords
 from flask import Flask, jsonify, request
 import logging
+from keras.preprocessing.sequence import pad_sequences
+from keras.models import load_model
+import keras.backend as K
 from sklearn import linear_model
 
 # Create Flask Application
@@ -16,6 +19,17 @@ app = Flask(__name__)
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
 app.logger.setLevel(logging.DEBUG)
+
+
+# Note : This function was taken from medium : https://medium.com/@aakashgoel12/how-to-add-user-defined-function-get-f1-score-in-keras-metrics-3013f979ce0d
+def get_f1(y_true, y_pred): #taken from old keras source code
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    recall = true_positives / (possible_positives + K.epsilon())
+    f1_val = 2*(precision*recall)/(precision+recall+K.epsilon())
+    return f1_val
 
 
 # Pre-load all the models
@@ -33,12 +47,17 @@ def load_tfidf_model():
     return loaded_model
 
 
-# Load the BOW model
+# LSTM model
+def load_LSTM_model():
+    filename = 'models/LSTM_model.h5'
+    loaded_model = load_model('models/LSTM_model.h5', custom_objects={"get_f1": get_f1})
+    return loaded_model
+
+
+# Load all the models
 loaded_model_BOW = load_BOW_model()
-
-
-# Load the tf-idf model
 loaded_model_tfidf = load_tfidf_model()
+loaded_model_LSTM = load_LSTM_model()
 
 
 # BOW vectorizer
@@ -81,9 +100,34 @@ def tfidf(X):
     return vectorizer.transform(X)
 
 
+# LSTM model
+def LSTM_model(X):
+    # Load the tokenizer
+    with open('pkl_file/tokenizer.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
+    maxlen = 200
+    # Tokenize
+    X = tokenizer.texts_to_sequences(X)
+    # Pad sequences
+    X = pad_sequences(X, padding='post', maxlen=maxlen)
+    return X
+
+
 # Assign classes based on the output vector
-def assign_class(output):
-    output = tuple(output[0])
+def assign_class(output, method):
+    if method == 'LSTM':
+        class_val = []
+        if output[0][0] > 0.5:
+            class_val.append(1)
+        else:
+            class_val.append(0)
+        if output[0][1] > 0.5:
+            class_val.append(1)
+        else:
+            class_val.append(0)
+        output = tuple(class_val)
+    else:
+        output = tuple(output[0])
     out = {
         (0, 0): "Others",
         (0, 1): "Congenital Anomalies",
@@ -114,15 +158,18 @@ def get_prediction():
         # Run it through the trained BOW model
         output = loaded_model_BOW.predict(data)
         app.logger.debug(f'Output:{output}')
-        # # Get the corresponding class of the output vector
-        # final_output = {"output": assign_class(output)}
     elif method == 'tf-idf':
         data = tfidf(data)
         # Run it through the trained tfidf model
         output = loaded_model_tfidf.predict(data)
         app.logger.debug(f'Output:{output}')
+    elif method == 'LSTM':
+        data = LSTM_model(data)
+        # Run it through the trained tfidf model
+        output = loaded_model_LSTM.predict(data)
+        app.logger.debug(f'Output:{output}')
     # Get the corresponding class of the output vector
-    final_output = {"output": assign_class(output)}
+    final_output = {"output": assign_class(output, method)}
     return jsonify(final_output)
 
 

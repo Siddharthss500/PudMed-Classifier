@@ -12,7 +12,7 @@ def main():
     df = pd.read_csv('data/test_df.csv')
     # Send every abstract serially
     for abst in df['Abstract']:
-        my_data = {'param': str(abst), 'method': 'tf-idf'}
+        my_data = {'param': str(abst), 'method': 'LSTM'}
         # Send a request using REST API
         output = requests.post(url, json=my_data)
         # Print the class of the abstract
