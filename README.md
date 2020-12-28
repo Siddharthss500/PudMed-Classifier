@@ -1,6 +1,6 @@
 # PudMed-Classifier
 
-The aim is to deploy a simple ML model (Bag-Of-Words Classifer Model) for Multi-Label Classification. Flask is used to build a simple REST API (to expose the API through web UI). Docker holds the ML model application. With this setup, one can invoke the ML model service using any REST client.
+The aim is to deploy a simple ML model (Bag-Of-Words Classifer Model) for Multi-Label Classification. Flask is used to build a simple REST API (to expose the API through web UI). Docker holds the ML model application. With this setup, one can invoke the ML model service using any REST client. Note that the application currently runs with 'LSTM' classifier model. This can be changed in the 'client.py' file.
 
 ## File structure
 
@@ -29,8 +29,8 @@ This command will ping the docker and receive the classified outputs continously
 
 ## Future work
 
-1. Implement all models
-2. Productionalize the code
+1. Productionalize the code
+2. Update current models with better models
 
 
 
