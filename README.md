@@ -1,36 +1,69 @@
 # PudMed-Classifier
 
-The aim is to deploy a simple ML model (Bag-Of-Words Classifer Model) for Multi-Label Classification. Flask is used to build a simple REST API (to expose the API through web UI). Docker holds the ML model application. With this setup, one can invoke the ML model service using any REST client. Note that the application currently runs with 'LSTM' classifier model. This can be changed in the 'client.py' file.
+The aim is to deploy a simple ML model (Bag-Of-Words Classifer Model) for Multi-Label Classification. A simple UI is built using Streamlit with FASTAPI in the backend. Docker is used to containerize FASTAPI and Streamlit. The application is deployed on an EC2 instance on AWS.
 
 ## File structure
 
-*data* - It has a small data file that is used for classification <br>
-*models* - Trained (not fully) ML classifier models are present. They are Bag-Of-Words model, tf-idf model, LSTM and BERT <br>
-*pkl_file* - It contains intermediate pickle files that are required for data pre-processing based on the model <br>
-*client.py* - It pings the *server.py* file serially to receive classified output <br>
-*server.py* - Flask application that accepts data to predict classes and returns a JSON format <br>
-*Dockerfile* - It is used to build the docker image <br>
-*requirements.txt* - It has a list of library packages needed for the docker image
+```
+├── backend
+│   ├── models
+│   │   ├── BOW_model.sav
+│   │   ├── LSTM_model.h5
+│   │   ├── tfidf_model.sav
+│   ├── pkl_file
+│   │   ├── tfidfvectorizer.pickle
+│   │   ├── tokenizer.pickle
+│   │   ├── words_to_idx.pickle
+│   ├── backend.py
+│   ├── Dockerfile
+│   ├── models_inference.py
+│   └── requirements.txt
+├── frontend
+│   ├── data
+│   │   ├── test_df.csv
+│   ├── DataDownload.py
+│   ├── Dockerfile
+│   ├── final_df.csv
+│   ├── frontend.py
+│   └── requirements.txt
+├── docker-compose.yml
+└── README.md
+```
 
 ## How to run locally
 
 ```
-docker build -t classifier-model .
-```
-```
-docker run -p 80:80 classifier-model
+docker-compose up -d --build
 ```
 
-Note that before running the above two commands the repository must be cloned. Once inside the folder the following commands will pull up the docker image. 
+Note that before running the above command the repository must be cloned. Once inside the folder the following command will create a docker container that will connect the frontend and backend. The UI will show up on   http://localhost:8501.
+
+
+The frontend and backend can be tested separately. To test the frontend separately we can run the following commands, 
+
+#### To test frontend
 ```
-python client.py
+docker build -t frontend .
 ```
-This command will ping the docker and receive the classified outputs continously.
+
+```
+docker run -p 8501:8501 frontend
+``` 
+#### To test backend
+```
+docker build -t backend .
+```
+
+```
+docker run -p 8080:8080 backend
+``` 
+
+Note that the streamlit UI is setup on the port 8501 and FAST API listens on the port 8080. 
 
 ## Future work
 
-1. Productionalize the code
-2. Update current models with better models
+1. Update current models with better models
+2. Integrate model training into UI and make it standalone
 
 
 
