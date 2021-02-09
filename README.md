@@ -36,10 +36,10 @@ The aim is to deploy a simple ML model (Bag-Of-Words Classifer Model) for Multi-
 docker-compose up -d --build
 ```
 
-Note that before running the above command the repository must be cloned. Once inside the folder the following command will create a docker container that will connect the frontend and backend. The UI will show up on   http://localhost:8501.
+Note that before running the above command the repository must be cloned and a few lines of code should be commented/uncommented (as mentioned in the commments of DataDownload.py and frontend.py). The command will create a docker container that connects two docker images (the frontend to the backend). The UI will show up on   http://localhost:8501.
 
 
-The frontend and backend can be tested separately. To test the frontend separately we can run the following commands, 
+The frontend and backend can be tested separately. To test the frontend separately we run the following commands, 
 
 #### To test frontend
 ```
