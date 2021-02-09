@@ -41,4 +41,4 @@ def get_prediction(abstract: JSONStructure = None):
 
 
 if __name__ == "__main__":
-    uvicorn.run("backend:app", host="0.0.0.0", port=8080)
+    uvicorn.run("backend_main:app", host="0.0.0.0", port=8080)

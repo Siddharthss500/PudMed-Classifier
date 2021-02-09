@@ -27,4 +27,4 @@ COPY . .
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "frontend.py"]
+CMD ["streamlit", "run", "frontend_main.py"]

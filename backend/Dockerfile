@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["python", "backend.py"]
+CMD ["python", "backend_main.py"]
