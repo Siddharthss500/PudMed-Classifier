@@ -39,7 +39,7 @@ docker-compose up -d --build
 Note that before running the above command the repository must be cloned and a few lines of code should be commented/uncommented (as mentioned in the commments of DataDownload.py and frontend.py). The command will create a docker container that connects two docker images (the frontend to the backend). The UI will show up on   http://localhost:8501.
 
 
-The frontend and backend can be tested separately. To test the frontend separately we run the following commands, 
+The frontend and backend can be tested separately. To test them separately we run the following commands, 
 
 #### To test frontend
 ```
@@ -62,8 +62,8 @@ Note that the streamlit UI is setup on the port 8501 and FAST API listens on the
 
 ## Future work
 
-1. Update current models with better models
-2. Integrate model training into UI and make it standalone
+1. Improve currently deployed ML/DL models
+2. Integrate model training into UI and make it a standalone application
 
 
 
