@@ -138,6 +138,8 @@ def main():
 
     # Prediction
     st.header("Data Prediction")
+    st.write("Note that the predictions occur for the already trained models on the two search terms"
+             " - adverse drug events and abnormalities, congenital.")
     st.write("Ten random data points are taken and classified into one of four classes based on the algorithm selected.")
     model_name = st.selectbox("Choose model to predict", ["BOW", "tf-idf", "LSTM"])
 

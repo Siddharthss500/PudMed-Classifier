@@ -195,7 +195,9 @@ def create_entry_terms(terms):
             new_term.append(updated_term)
             which_term = two_terms.index(trm)
             count += 1
-    if count == 2:
+    if count == 0:
+        new_term = None
+    elif count == 2:
         which_term = 2
     return two_entry_sets, new_term, which_term
 
