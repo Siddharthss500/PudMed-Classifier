@@ -107,8 +107,8 @@ def main():
     placeholder_search_one = st.empty()
     placeholder_search_two = st.empty()
     # Setting up placeholders
-    search_term_one = placeholder_search_one.text_input("Please enter search term 1", value="chemical reactions")
-    search_term_two = placeholder_search_two.text_input("Please enter search term 2", value="drug events")
+    search_term_one = placeholder_search_one.text_input("Please enter search term 1", value="adverse drug events")
+    search_term_two = placeholder_search_two.text_input("Please enter search term 2", value="abnormalities, congenital")
     # Search terms = adverse drug events, abnormalities, congenital
     search_terms = [search_term_one, search_term_two]
 
